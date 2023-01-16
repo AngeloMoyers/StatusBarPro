@@ -43,6 +43,7 @@ public class StatusBar : MonoBehaviour
     [SerializeField] public bool AddTextOverlay;
     [SerializeField] public bool UseTMPro;
     [SerializeField] public OverlayTextMode OverlayMode;
+    [SerializeField] public Vector2 OverlayTextPosition;
     [SerializeField] public string CustomOverlayText;
 
     GameObject TMProOverlayTextObject;
@@ -54,6 +55,8 @@ public class StatusBar : MonoBehaviour
     //ValueIncrementTicks
     [SerializeField] public bool AddIncrementalTicks;
     [SerializeField] public Sprite TickSprite;
+    [SerializeField] public Vector2 TickSize;
+    [SerializeField] public Color TickColor;
     [SerializeField] public IncrementalTickMode TickMode;
     [SerializeField] public float TickInterval;
 
@@ -79,6 +82,11 @@ public class StatusBar : MonoBehaviour
     [HideInInspector][SerializeField] int MaxValue;
     [HideInInspector] [SerializeField] int CurrentValue;
     float NormalizedValue;
+
+    private void Reset()
+    {
+        Debug.Log("Status Bar Created");
+    }
 
     public void SetTo()
     {
@@ -191,6 +199,8 @@ public class StatusBar : MonoBehaviour
                         break;
                     }
             }
+
+            UpdateFillColor();
         }
     }
 
@@ -234,7 +244,8 @@ public class StatusBar : MonoBehaviour
 
     public void OnBarTypeChanged()
     {
-        InitTypeSpecificVariables();
+        InitImages();
+        OnIncrementalTicksChanged();
     }
 
     public void OnSizeChanged()
@@ -287,106 +298,138 @@ public class StatusBar : MonoBehaviour
         }
     }
 
-    void InitTypeSpecificVariables()
+    private void UpdateFillColor()
+    {
+        if (FillImage != null)
+        {
+            switch (FillGradientMode)
+            {
+                case GradientColorMode.Blend:
+                    FillImage.color = FillGradient.Evaluate(FillImage.fillAmount);
+                    break;
+                case GradientColorMode.Threshold:
+                    {
+                        int index = 0;
+                        foreach (var key in FillGradient.colorKeys)
+                        {
+                            if (FillImage.fillAmount >= FillGradient.colorKeys[index].time)
+                            {
+                                index++;
+                                continue;
+                            }
+                            FillImage.color = FillGradient.colorKeys[index].color;
+                        }
+                        break;
+                    }
+                case GradientColorMode.Solid:
+                    FillImage.color = FillGradient.Evaluate(0);
+                    break;
+            }
+        }
+    }
+
+    void InitImages()
     {
         UpdateValue();
         GatherObjects();
+
+        if (BarType.ToString().Contains("Fill"))
+        {
+            if (FillImage != null)
+            {
+                FillImage.sprite = CustomFill ? CustomFillSprite : SourceImage;
+                FillImage.type = Image.Type.Filled;
+                FillImage.fillAmount = NormalizedValue;
+
+                UpdateFillColor();
+            }
+
+            //Background Image
+            if (CustomBackground && BackgroundImage != null)
+            {
+                BackgroundImage.sprite = CustomBackgroundSprite;
+                BackgroundImage.color = BackgroundColor;
+            }
+            else if (BackgroundImage != null)
+            {
+                BackgroundImage.sprite = SourceImage;
+                BackgroundImage.type = Image.Type.Simple;
+                BackgroundImage.color = BackgroundColor;
+            }
+
+            //Border Image
+            if (CustomBorder && BackgroundImage != null)
+            {
+                BorderImage.sprite = CustomBorderSprite;
+                BorderImage.color = BorderColor;
+            }
+            else
+            {
+                if (BorderImage != null)
+                {
+                    BorderImage.sprite = SourceImage;
+                    BorderImage.type = Image.Type.Simple;
+                    BorderImage.color = BorderColor;
+                }
+
+                if (BorderMaskImage != null)
+                {
+                    BorderMaskImage.sprite = SourceImage;
+                }
+            }
+            if (BarMaskImage != null)
+            {
+                BarMaskImage.sprite = SourceImage;
+                BarMaskImage.type = Image.Type.Simple;
+            }
+        }
+
         switch (BarType)
         {
             case StatusBarType.FillLeft:
                 {
-
                     if (FillImage != null)
                     {
-                        FillImage.sprite = CustomFill ? CustomFillSprite : SourceImage;
-                        FillImage.type = Image.Type.Filled;
                         FillImage.fillMethod = Image.FillMethod.Horizontal;
                         FillImage.fillOrigin = (int)Image.OriginHorizontal.Left;
-                        FillImage.fillAmount = NormalizedValue;
-
-                        switch (FillGradientMode)
-                        {
-                            case GradientColorMode.Blend:
-                                FillImage.color = FillGradient.Evaluate(NormalizedValue);
-                                break;
-                            case GradientColorMode.Threshold:
-                                {
-                                    int index = 0;
-                                    foreach (var key in FillGradient.colorKeys)
-                                    {
-                                        if (NormalizedValue >= FillGradient.colorKeys[index].time)
-                                        {
-                                            index++;
-                                            continue;
-                                        }
-                                        FillImage.color = FillGradient.colorKeys[index].color;
-                                    }
-                                    break;
-                                }
-                            case GradientColorMode.Solid:
-                                FillImage.color = FillGradient.Evaluate(0);
-                                break;
-                        }
-                    }
-
-                    //Background Image
-                    if (CustomBackground && BackgroundImage != null)
-                    {
-                        BackgroundImage.sprite = CustomBackgroundSprite;
-                        BackgroundImage.color = BackgroundColor;
-                    }
-                    else if (BackgroundImage != null)
-                    {
-                        BackgroundImage.sprite = SourceImage;
-                        BackgroundImage.type = Image.Type.Simple;
-                        BackgroundImage.color = BackgroundColor;
-                    }
-
-                    //Border Image
-                    if (CustomBorder && BackgroundImage != null)
-                    {
-                        BorderImage.sprite = CustomBorderSprite;
-                        BorderImage.color = BorderColor;
-                    }
-                    else
-                    {
-                        if (BorderImage != null)
-                        {
-                            BorderImage.sprite = SourceImage;
-                            BorderImage.type = Image.Type.Simple;
-                            BorderImage.color = BorderColor;
-                        }
-
-                        if (BorderMaskImage != null)
-                        {
-                            BorderMaskImage.sprite = SourceImage;
-                        }
                     }
 
                     break;
                 }
             case StatusBarType.FillRight:
                 {
-                    GameObject FillObject = transform.Find("Background/Fill").gameObject;
-                    if (FillObject != null)
+                    if (FillImage != null)
                     {
-                        FillImage = FillObject.GetComponent<Image>();
-                        FillImage.type = Image.Type.Filled;
                         FillImage.fillMethod = Image.FillMethod.Horizontal;
                         FillImage.fillOrigin = (int)Image.OriginHorizontal.Right;
-                        FillImage.fillAmount = NormalizedValue;
                     }
+
                     break;
                 }
-            case StatusBarType.FillCenterHorizontal:
+
+            case StatusBarType.FillTop:
+                {
+                    if (FillImage != null)
+                    {
+                        FillImage.fillMethod = Image.FillMethod.Vertical;
+                        FillImage.fillOrigin = (int)Image.OriginVertical.Top;
+                    }
+
+                    break;
+                }
+            case StatusBarType.FillBottom:
+                {
+                    if (FillImage != null)
+                    {
+                        FillImage.fillMethod = Image.FillMethod.Vertical;
+                        FillImage.fillOrigin = (int)Image.OriginVertical.Bottom;
+                    }
+
+                    break;
+                }
+            case StatusBarType.ContainerLeft:
                 break;
-            case StatusBarType.ContainerFullLeft:
-                break;
-            case StatusBarType.ContainerFullRight:
-                break;
-            case StatusBarType.ContainerPartialLeft:
-                break;
-            case StatusBarType.ContainerPartialRight:
+            case StatusBarType.ContainerRight:
                 break;
         }
 
@@ -448,6 +491,23 @@ public class StatusBar : MonoBehaviour
 
         if (AddTextOverlay)
         {
+            if (UseTMPro)
+            {
+                if (TMProOverlayTextObject != null)
+                {
+                    RectTransform rect = TMProOverlayTextObject.GetComponent<RectTransform>();
+                    rect.localPosition = OverlayTextPosition;
+                }
+            }
+            else
+            {
+                if (OverlayTextObject != null)
+                {
+                    RectTransform rect = OverlayTextObject.GetComponent<RectTransform>();
+                    rect.localPosition = OverlayTextPosition;
+                }
+            }
+
             if (TMProOverlayTextObject != null)
             {
                 TMProOverlayTextObject.SetActive(UseTMPro);
@@ -552,37 +612,167 @@ public class StatusBar : MonoBehaviour
     
     public void OnIncrementalTicksChanged()
     {
+        GatherObjects();
+
         if (BarMaskObject != null)
         {
-            foreach (Transform child in BarMaskObject.transform)
+            for (int i = BarMaskObject.transform.childCount; i > 0; --i)
+                DestroyImmediate(BarMaskObject.transform.GetChild(0).gameObject);
+        }
+
+        if (AddIncrementalTicks)
+        {
+            if (TickInterval > 0)
             {
-                GameObject.DestroyImmediate(child.gameObject);
+                switch (TickMode)
+                {
+                    case IncrementalTickMode.Percent:
+                        {
+                            HandleIncrementalTicksPercent();
+                        }
+                        break;
+                    case IncrementalTickMode.Value:
+                        {
+                            HandleIncrementalTickValue();
+                        }
+                        break;
+                }
             }
         }
-        
-        //TODO, replace all objects :(
+    }
 
-        switch (TickMode)
+    private void HandleIncrementalTicksPercent()
+    {
+        if (BarType == StatusBarType.FillLeft)
         {
-            case IncrementalTickMode.Percent:
-                {
-                    float range = FillImage.rectTransform.rect.width;
-                    float multiplier = range / 100f;
+            float range = FillImage.rectTransform.rect.width;
+            float multiplier = range / 100f;
 
-                    int count = (int)TickInterval;
-                    do
-                    {
-                        GameObject newTick = CreateTick();
-                        RectTransform tform = newTick.GetComponent<RectTransform>();
-                        tform.sizeDelta = new Vector2(TickInterval * multiplier, tform.sizeDelta.y);
-                    } while (count < 100);
-                }
-                break;
-            case IncrementalTickMode.Value:
+            int count = (int)TickInterval - 50;
+            do
+            {
+                GameObject newTick = CreateTick();
+                RectTransform tform = newTick.GetComponent<RectTransform>();
+                tform.localPosition = new Vector3(count * multiplier, 0, tform.localPosition.z);
+
+                count += (int)TickInterval;
+            } while (count < 50);
+        }
+        else if (BarType == StatusBarType.FillRight)
+        {
+            float range = FillImage.rectTransform.rect.width;
+            float multiplier = range / 100f;
+
+            int count = 50 - (int)TickInterval;
+            do
+            {
+                GameObject newTick = CreateTick();
+                RectTransform tform = newTick.GetComponent<RectTransform>();
+                tform.localPosition = new Vector3(count * multiplier, 0, tform.localPosition.z);
+
+                count -= (int)TickInterval;
+            } while (count > -50);
+        }
+        else if (BarType == StatusBarType.FillBottom)
+        {
+            float range = FillImage.rectTransform.rect.height;
+            float multiplier = range / 100f;
+
+            int count = (int)TickInterval - 50;
+            do
+            {
+                GameObject newTick = CreateTick();
+                RectTransform tform = newTick.GetComponent<RectTransform>();
+                tform.localPosition = new Vector3(0, count * multiplier, tform.localPosition.z);
+
+                count += (int)TickInterval;
+            } while (count < 50);
+        }
+        else if (BarType == StatusBarType.FillTop)
+        {
+            float range = FillImage.rectTransform.rect.height;
+            float multiplier = range / 100f;
+
+            int count = 50 - (int)TickInterval;
+            do
+            {
+                GameObject newTick = CreateTick();
+                RectTransform tform = newTick.GetComponent<RectTransform>();
+                tform.localPosition = new Vector3(0, count * multiplier, tform.localPosition.z);
+
+                count -= (int)TickInterval;
+            } while (count > -50);
+        }
+    }
+
+    private void HandleIncrementalTickValue()
+    {
+        if (BarType == StatusBarType.FillLeft)
+        {
+            float range = FillImage.rectTransform.rect.width;
+            float multiplier = range / 100f;
+
+            int incrementAmount = (int)((TickInterval / MaxValue) * 100);
+            int count = incrementAmount - 50;
+            do
+            {
+                GameObject newTick = CreateTick();
+                RectTransform tform = newTick.GetComponent<RectTransform>();
+                tform.localPosition = new Vector3(count * multiplier, 0, tform.localPosition.z);
+
+                count += incrementAmount;
+            } while (count < 50);
+        }
+        else if (BarType == StatusBarType.FillRight)
+        {
+            if (MaxValue > 0)
+            {
+                float range = FillImage.rectTransform.rect.width;
+                float multiplier = range / 100f;
+
+                int incrementAmount = (int)((TickInterval / MaxValue) * 100);
+                int count = 50 - incrementAmount;
+                do
                 {
-                    //int tickCount = MaxValue / (int)TickInterval;
-                }
-                break;
+                    GameObject newTick = CreateTick();
+                    RectTransform tform = newTick.GetComponent<RectTransform>();
+                    tform.localPosition = new Vector3(count * multiplier, 0, tform.localPosition.z);
+
+                    count -= incrementAmount;
+                } while (count > -50);
+            }
+        }
+        else if (BarType == StatusBarType.FillBottom)
+        {
+            float range = FillImage.rectTransform.rect.height;
+            float multiplier = range / 100f;
+
+            int incrementAmount = (int)((TickInterval / MaxValue) * 100);
+            int count = incrementAmount - 50;
+            do
+            {
+                GameObject newTick = CreateTick();
+                RectTransform tform = newTick.GetComponent<RectTransform>();
+                tform.localPosition = new Vector3(0, count * multiplier, tform.localPosition.z);
+
+                count += incrementAmount;
+            } while (count < 50);
+        }
+        else if (BarType == StatusBarType.FillTop)
+        {
+            float range = FillImage.rectTransform.rect.height;
+            float multiplier = range / 100f;
+
+            int incrementAmount = (int)((TickInterval / MaxValue) * 100);
+            int count = 50 - incrementAmount;
+            do
+            {
+                GameObject newTick = CreateTick();
+                RectTransform tform = newTick.GetComponent<RectTransform>();
+                tform.localPosition = new Vector3(0, count * multiplier, tform.localPosition.z);
+
+                count -= incrementAmount;
+            } while (count > -50);
         }
     }
 
@@ -590,13 +780,15 @@ public class StatusBar : MonoBehaviour
     {
         GameObject Tick = new GameObject("Tick");
         Tick.transform.parent = BarMaskObject.transform;
-        RectTransform Transform = Tick.AddComponent<RectTransform>();
+        RectTransform rectTransform = Tick.AddComponent<RectTransform>();
         Image TickImage = Tick.AddComponent<Image>();
 
-        Transform.anchorMin = new Vector2(0, 0.5f);
-        Transform.anchorMax = new Vector2(0, 0.5f);
+        rectTransform.sizeDelta = TickSize;
+        rectTransform.anchorMin = new Vector2(0, 0.5f);
+        rectTransform.anchorMax = new Vector2(0, 0.5f);
 
         TickImage.sprite = TickSprite;
+        TickImage.color = TickColor;
 
         return Tick;
     }

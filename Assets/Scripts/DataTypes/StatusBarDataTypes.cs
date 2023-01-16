@@ -7,11 +7,10 @@ public enum StatusBarType
 {
     FillLeft,
     FillRight,
-    FillCenterHorizontal,
-    ContainerFullLeft,
-    ContainerFullRight,
-    ContainerPartialLeft,
-    ContainerPartialRight
+    FillTop,
+    FillBottom,
+    ContainerLeft,
+    ContainerRight,
 }
 
 [System.Serializable]

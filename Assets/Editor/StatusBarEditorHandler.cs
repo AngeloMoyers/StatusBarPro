@@ -38,11 +38,14 @@ public class StatusBarEditorHandler : Editor
     SerializedProperty AddTextOverlay;
     SerializedProperty UseTMPro;
     SerializedProperty OverlayMode;
+    SerializedProperty OverlayTextPosition;
     SerializedProperty CustomOverlayText;
 
     //Incremental Tick
     SerializedProperty AddIncrementalTicks;
     SerializedProperty TickSprite;
+    SerializedProperty TickColor;
+    SerializedProperty TickSize;
     SerializedProperty TickMode;
     SerializedProperty TickInterval;
 
@@ -74,10 +77,13 @@ public class StatusBarEditorHandler : Editor
         AddTextOverlay = serializedObject.FindProperty("AddTextOverlay");
         UseTMPro = serializedObject.FindProperty("UseTMPro");
         OverlayMode = serializedObject.FindProperty("OverlayMode");
+        OverlayTextPosition = serializedObject.FindProperty("OverlayTextPosition");
         CustomOverlayText = serializedObject.FindProperty("CustomOverlayText");
 
         AddIncrementalTicks = serializedObject.FindProperty("AddIncrementalTicks");
         TickSprite = serializedObject.FindProperty("TickSprite");
+        TickColor = serializedObject.FindProperty("TickColor");
+        TickSize = serializedObject.FindProperty("TickSize");
         TickMode = serializedObject.FindProperty("TickMode");
         TickInterval = serializedObject.FindProperty("TickInterval");
 
@@ -222,6 +228,7 @@ public class StatusBarEditorHandler : Editor
             {
                 UseTMPro.boolValue = EditorGUILayout.Toggle("Use TMPro", bar.UseTMPro);
                 OverlayMode.enumValueIndex = (int)(OverlayTextMode)EditorGUILayout.EnumPopup("Overlay Text Mode", bar.OverlayMode);
+                OverlayTextPosition.vector2Value = EditorGUILayout.Vector2Field("Overlay Text Position", bar.OverlayTextPosition);
 
                 if (OverlayMode.enumValueIndex == (int)OverlayTextMode.Custom)
                 {
@@ -246,6 +253,8 @@ public class StatusBarEditorHandler : Editor
             if (AddIncrementalTicks.boolValue)
             {
                 TickSprite.objectReferenceValue = EditorGUILayout.ObjectField("Incremental Tick Sprite", TickSprite.objectReferenceValue, typeof(Sprite), false, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                TickColor.colorValue = EditorGUILayout.ColorField("Tick Color", bar.TickColor);
+                TickSize.vector2Value = EditorGUILayout.Vector2Field("Tick Dimensions", bar.TickSize);
                 TickMode.enumValueIndex = (int)(IncrementalTickMode)EditorGUILayout.EnumPopup("Incremental Tick Mode", bar.TickMode);
                 TickInterval.floatValue = EditorGUILayout.FloatField("Incremental Tick Interval", bar.TickInterval);
             }

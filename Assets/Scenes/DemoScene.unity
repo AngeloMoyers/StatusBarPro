@@ -290,7 +290,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 4, y: -9.16}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &31288997
@@ -326,7 +326,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 8(80%)
+  m_Text: 8
 --- !u!222 &31288998
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -745,7 +745,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 18.7}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &339137037
@@ -762,12 +762,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BarType: 0
   Size: {x: 200, y: 50}
-  SourceImage: {fileID: 21300000, guid: 5f9e782b19f349344be5063c28be8066, type: 3}
-  BackgroundColor: {r: 0.7924528, g: 0.20558919, b: 0.20558919, a: 0.5176471}
+  SourceImage: {fileID: 21300000, guid: bbf70346fa77964438016bbf7e68b9e9, type: 3}
+  BackgroundColor: {r: 0.7075472, g: 0.19023673, b: 0.19023673, a: 0.57254905}
   BorderColor: {r: 0, g: 0, b: 0, a: 1}
   FillGradient:
     serializedVersion: 2
-    key0: {r: 1, g: 0.20549601, b: 0, a: 1}
+    key0: {r: 1, g: 0.17731296, b: 0, a: 1}
     key1: {r: 0.9475136, g: 1, b: 0, a: 1}
     key2: {r: 0.041301727, g: 1, b: 0, a: 0}
     key3: {r: 0.041301727, g: 1, b: 0, a: 0}
@@ -775,7 +775,7 @@ MonoBehaviour:
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 16384
+    ctime0: 0
     ctime1: 46067
     ctime2: 65535
     ctime3: 65535
@@ -806,12 +806,15 @@ MonoBehaviour:
   FillAnimationRate: 1
   AddTextOverlay: 0
   UseTMPro: 0
-  OverlayMode: 3
-  CustomOverlayText: 10
+  OverlayMode: 0
+  OverlayTextPosition: {x: 4, y: -9.16}
+  CustomOverlayText: 
   AddIncrementalTicks: 0
-  TickSprite: {fileID: 0}
+  TickSprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  TickSize: {x: 2, y: 100}
+  TickColor: {r: 0, g: 0, b: 0, a: 1}
   TickMode: 0
-  TickInterval: 0
+  TickInterval: 2
   BorderThickness: {x: 5, y: 5}
   BorderOffset: {x: 0, y: 0}
   MaxValue: 10
@@ -1032,7 +1035,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5f9e782b19f349344be5063c28be8066, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bbf70346fa77964438016bbf7e68b9e9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1580,14 +1583,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7924528, g: 0.20558919, b: 0.20558919, a: 0.5176471}
+  m_Color: {r: 0.7075472, g: 0.19023673, b: 0.19023673, a: 0.57254905}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5f9e782b19f349344be5063c28be8066, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bbf70346fa77964438016bbf7e68b9e9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1745,7 +1748,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5f9e782b19f349344be5063c28be8066, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bbf70346fa77964438016bbf7e68b9e9, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1876,7 +1879,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -10.1}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1327538187
@@ -2048,7 +2051,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5f9e782b19f349344be5063c28be8066, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bbf70346fa77964438016bbf7e68b9e9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
