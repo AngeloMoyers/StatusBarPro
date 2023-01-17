@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -77,10 +78,25 @@ public class StatusBar : MonoBehaviour
     [SerializeField] public Vector2Int BorderOffset;
 
     //End Fill#####################################
+    //Container####################################
+    [SerializeField] public int ValuePerContainer;
+    [SerializeField] public Vector2 ContainerOffset;
+    [SerializeField] public int ContainersPerRow;
+    [SerializeField] public bool WrapContainers;
+    [SerializeField] public Vector2 WrapOffset;
+
+    Dictionary<GameObject, StatusBar> ContainerMap;
+    //End Container################################
 
     //Data
     [HideInInspector][SerializeField] int MaxValue;
     [HideInInspector] [SerializeField] int CurrentValue;
+
+    int ContainerMaxValue;
+    int ContainerCurrentValue;
+    int ContainerIndex;
+
+
     float NormalizedValue;
 
     private void Reset()
@@ -130,7 +146,7 @@ public class StatusBar : MonoBehaviour
     private void Awake()
     {
         GatherObjects();
-        UpdateValue();
+        NormalizedValue = (float)CurrentValue / (float)MaxValue;
     }
 
     void Start()
@@ -144,131 +160,70 @@ public class StatusBar : MonoBehaviour
 
     void AnimateFill()
     {
-        bool isContainer = BarType.ToString().Contains("Container");
-        if (isContainer && ContainerIndex != 0)
-        {
-            UpdateFillColor();
-            return;
-        }
 
-        if (isContainer && ContainerIndex == 0 && ContainerMap != null)
-        {
-            foreach (var container in ContainerMap.Reverse())
-            {
-                float normValue = (float)container.Value.ContainerCurrentValue / (float)container.Value.ContainerMaxValue;
-                if (!Mathf.Approximately(normValue, container.Value.FillImage.fillAmount))
-                {
-                    container.Value.UpdateFillValue();
-                    break;
-                }
-            }
-        }
-    }
-
-    private void UpdateFillValue()
-    {
-        bool isContainer = BarType.ToString().Contains("Container");
         if (FillImage != null && !Mathf.Approximately(NormalizedValue, FillImage.fillAmount))
         {
-<<<<<<< HEAD
-          
-            float normValue = isContainer ? (float)ContainerCurrentValue / (float)ContainerMaxValue : NormalizedValue;
-
-=======
->>>>>>> parent of 1985941 (Container Base Functionality)
-            switch (FillAnimationMode)
+            if (BarType.ToString().Contains("Container"))
             {
-                case FillAnimationMode.FixedTime:
-                    {
-<<<<<<< HEAD
-                        float differenceBetweenCurrentAndTarget = Mathf.Abs(FillImage.fillAmount - normValue);
-                        float timeLeft = TargetEndAnimationTime - Time.time;
-                        float amountToMoveThisFrame = (differenceBetweenCurrentAndTarget / timeLeft) * Time.deltaTime;
 
-                        if (normValue < FillImage.fillAmount)
+
+            }
+            else
+            {
+                float normValue = BarType.ToString().Contains("Container") ? (float)ContainerCurrentValue / (float)ContainerMaxValue : NormalizedValue;
+
+                switch (FillAnimationMode)
+                {
+                    case FillAnimationMode.FixedTime:
                         {
-                            FillImage.fillAmount -= amountToMoveThisFrame;
+                            float differenceBetweenCurrentAndTarget = Mathf.Abs(FillImage.fillAmount - normValue);
+                            float timeLeft = TargetEndAnimationTime - Time.time;
+                            float amountToMoveThisFrame = (differenceBetweenCurrentAndTarget / timeLeft) * Time.deltaTime;
 
-                            if (FillImage.fillAmount < normValue)
+                            if (normValue < FillImage.fillAmount)
+                            {
+                                FillImage.fillAmount -= amountToMoveThisFrame;
+
+                                if (FillImage.fillAmount < normValue)
+                                    FillImage.fillAmount = normValue;
+                            }
+                            else if (normValue > FillImage.fillAmount)
+                            {
+                                FillImage.fillAmount += amountToMoveThisFrame;
+
+                                if (FillImage.fillAmount > normValue)
+                                    FillImage.fillAmount = normValue;
+                            }
+
+                            if (Mathf.Approximately(FillImage.fillAmount, normValue))
                                 FillImage.fillAmount = normValue;
+
+                            break;
                         }
-                        else if (normValue > FillImage.fillAmount)
+                    case FillAnimationMode.Speed:
                         {
-                            FillImage.fillAmount += amountToMoveThisFrame;
+                            if (normValue < FillImage.fillAmount)
+                            {
+                                FillImage.fillAmount -= Time.deltaTime * FillAnimationRate;
 
-                            if (FillImage.fillAmount > normValue)
-                                FillImage.fillAmount = normValue;
+                                if (FillImage.fillAmount < normValue)
+                                    FillImage.fillAmount = normValue;
+                            }
+                            else
+                            {
+                                FillImage.fillAmount += Time.deltaTime * FillAnimationRate;
+
+                                if (FillImage.fillAmount > normValue)
+                                    FillImage.fillAmount = normValue;
+                            }
+                            break;
                         }
-
-                        if (Mathf.Approximately(FillImage.fillAmount, normValue) || Time.time > TargetEndAnimationTime)
+                    case FillAnimationMode.Instant:
+                        {
                             FillImage.fillAmount = normValue;
-=======
-                        float differenceBetweenCurrentAndTarget = Mathf.Abs(FillImage.fillAmount - NormalizedValue);
-                        float timeLeft = TargetEndAnimationTime - Time.time;
-                        float amountToMoveThisFrame = (differenceBetweenCurrentAndTarget / timeLeft) * Time.deltaTime;
-
-                        if (NormalizedValue < FillImage.fillAmount)
-                        {
-                            FillImage.fillAmount -= amountToMoveThisFrame;
-
-                            if (FillImage.fillAmount < NormalizedValue)
-                                FillImage.fillAmount = NormalizedValue;
+                            break;
                         }
-                        else if (NormalizedValue > FillImage.fillAmount)
-                        {
-                            FillImage.fillAmount += amountToMoveThisFrame;
-
-                            if (FillImage.fillAmount > NormalizedValue)
-                                FillImage.fillAmount = NormalizedValue;
-                        }
-
-                        if (Mathf.Approximately(FillImage.fillAmount, NormalizedValue))
-                            FillImage.fillAmount = NormalizedValue;
->>>>>>> parent of 1985941 (Container Base Functionality)
-
-                        break;
-                    }
-                case FillAnimationMode.Speed:
-                    {
-<<<<<<< HEAD
-                        if (normValue < FillImage.fillAmount)
-                        {
-                            FillImage.fillAmount -= Time.deltaTime * FillAnimationRate;
-
-                            if (FillImage.fillAmount < normValue)
-                                FillImage.fillAmount = normValue;
-=======
-                        if (NormalizedValue < FillImage.fillAmount)
-                        {
-                            FillImage.fillAmount -= Time.deltaTime * FillAnimationRate;
-
-                            if (FillImage.fillAmount < NormalizedValue)
-                                FillImage.fillAmount = NormalizedValue;
->>>>>>> parent of 1985941 (Container Base Functionality)
-                        }
-                        else
-                        {
-                            FillImage.fillAmount += Time.deltaTime * FillAnimationRate;
-
-<<<<<<< HEAD
-                            if (FillImage.fillAmount > normValue)
-                                FillImage.fillAmount = normValue;
-=======
-                            if (FillImage.fillAmount > NormalizedValue)
-                                FillImage.fillAmount = NormalizedValue;
->>>>>>> parent of 1985941 (Container Base Functionality)
-                        }
-                        break;
-                    }
-                case FillAnimationMode.Instant:
-                    {
-<<<<<<< HEAD
-                        FillImage.fillAmount = normValue;
-=======
-                        FillImage.fillAmount = NormalizedValue;
->>>>>>> parent of 1985941 (Container Base Functionality)
-                        break;
-                    }
+                }
             }
 
             UpdateFillColor();
@@ -291,23 +246,6 @@ public class StatusBar : MonoBehaviour
             TargetEndAnimationTime = Time.time + FillAnimationRate;
         }
 
-        if (BarType.ToString().Contains("Container"))
-        {
-            int valueTracker = CurrentValue;
-            foreach(var container in ContainerMap)
-            {
-                if (valueTracker >= ValuePerContainer)
-                {
-                    container.Value.ContainerCurrentValue = ValuePerContainer;
-                }
-                else
-                {
-                    container.Value.ContainerCurrentValue = valueTracker;
-                }
-                valueTracker -= ValuePerContainer;
-            }
-        }
-
         return CurrentValue;
     }
 
@@ -327,27 +265,35 @@ public class StatusBar : MonoBehaviour
             TargetEndAnimationTime = Time.time + FillAnimationRate;
         }
 
-        if (BarType.ToString().Contains("Container"))
-        {
-            int valueTracker = CurrentValue;
-            if (ContainerMap != null)
-            {
-                foreach (var container in ContainerMap)
-                {
-                    if (valueTracker >= ValuePerContainer)
-                    {
-                        container.Value.ContainerCurrentValue = ValuePerContainer;
-                    }
-                    else
-                    {
-                        container.Value.ContainerCurrentValue = valueTracker;
-                    }
-                    valueTracker -= ValuePerContainer;
-                }
-            }
-        }
-
         return CurrentValue;
+    }
+
+    public int SetMaxValue(int amount)
+    {
+        MaxValue += amount;
+
+        if (MaxValue < 0)
+            MaxValue = 0;
+
+        UpdateValue();
+
+        return MaxValue;
+    }
+
+    public int AdjustMaxValue(int amount)
+    {
+        MaxValue += amount;
+
+        if (MaxValue < 0)
+            MaxValue = 0;
+
+        UpdateValue();
+
+        return MaxValue;
+    }
+     void SetContainerCurrentValue(int amount)
+    {
+        ContainerCurrentValue = amount;
     }
 
     public void OnBarTypeChanged()
@@ -360,9 +306,6 @@ public class StatusBar : MonoBehaviour
     {
         UpdateValue();
         GatherObjects();
-
-<<<<<<< HEAD
-        UpdateAllSizes();
 
         if (ContainerMap != null)
         {
@@ -402,13 +345,10 @@ public class StatusBar : MonoBehaviour
         bar.TickSize = TickSize;
         bar.TickMode = TickMode;
         bar.TickInterval = TickInterval;
-        bar.ContainerMaxValue = ContainerMaxValue;
     }
 
     private void UpdateAllSizes()
     {
-=======
->>>>>>> parent of 1985941 (Container Base Functionality)
         if (!CustomFill || MatchDimensionsForCustomSprites)
         {
             if (FillObject != null)
@@ -461,14 +401,14 @@ public class StatusBar : MonoBehaviour
             switch (FillGradientMode)
             {
                 case GradientColorMode.Blend:
-                    FillImage.color = FillGradient.Evaluate(FillImage.fillAmount);
+                    FillImage.color = FillGradient.Evaluate(NormalizedValue);
                     break;
                 case GradientColorMode.Threshold:
                     {
                         int index = 0;
                         foreach (var key in FillGradient.colorKeys)
                         {
-                            if (FillImage.fillAmount >= FillGradient.colorKeys[index].time)
+                            if (NormalizedValue >= FillGradient.colorKeys[index].time)
                             {
                                 index++;
                                 continue;
@@ -482,12 +422,39 @@ public class StatusBar : MonoBehaviour
                     break;
             }
         }
+
+        if (BarType.ToString().Contains("Container"))
+        {
+            if (ContainerMap != null)
+            {
+                foreach (var container in ContainerMap)
+                {
+                    if (container.Key != gameObject)
+                        container.Value.UpdateFillColor();
+                }
+            }
+        }
     }
 
     void InitImages()
     {
         UpdateValue();
         GatherObjects();
+
+        for (int i = transform.childCount; i > 0; --i)
+        {
+            if (transform.GetChild(0).name == "Container")
+                DestroyImmediate(BarMaskObject.transform.GetChild(0).gameObject);
+        }
+
+        if (ContainerMap == null)
+            ContainerMap = new Dictionary<GameObject, StatusBar>();
+        foreach (var container in ContainerMap)
+        {
+            if (container.Key != gameObject)
+                DestroyImmediate(container.Key);
+        }
+        ContainerMap.Clear();
 
         if (BarType.ToString().Contains("Fill"))
         {
@@ -584,8 +551,75 @@ public class StatusBar : MonoBehaviour
                     break;
                 }
             case StatusBarType.ContainerLeft:
+                {
+                    if (MaxValue > 0 && ValuePerContainer > 0)
+                    {
+                        int ContainerCount = (int)(MaxValue / ValuePerContainer);
+
+                        ContainerMap.Add(gameObject, this);
+                        ContainerMaxValue = (ValuePerContainer);
+                        ContainerCurrentValue = (CurrentValue < ValuePerContainer ? CurrentValue : ContainerMaxValue);
+
+                        if (FillImage != null)
+                        {
+                            FillImage.fillMethod = Image.FillMethod.Radial360;
+                            FillImage.fillOrigin = (int)Image.OriginVertical.Bottom;
+                            FillImage.fillAmount = (float)ContainerCurrentValue / (float)ContainerMaxValue;
+                        }
+                        ContainerIndex = 0;
+
+                        int rowCount = 0;
+                        for (int i = 1; i < ContainerCount; i++)
+                        {
+                            GameObject container = Instantiate(gameObject);
+                            container.name = "Container";
+                            StatusBar bar = container.GetComponent<StatusBar>();
+                            MatchAllData(bar);
+                            ContainerMap.Add(container, bar);
+
+                            bar.ContainerMaxValue = (ValuePerContainer);
+                            bar.ContainerCurrentValue = ((CurrentValue < (i + 1) * ValuePerContainer) ? CurrentValue % ValuePerContainer : ValuePerContainer);
+                            bar.CurrentValue = CurrentValue;
+                            bar.MaxValue = MaxValue;
+                            bar.ContainerIndex = i;
+
+                            bar.GatherObjects();
+                            if (bar.FillImage != null)
+                            {
+                                bar.FillImage.fillMethod = Image.FillMethod.Radial360;
+                                bar.FillImage.fillOrigin = (int)Image.OriginVertical.Bottom;
+                                bar.FillImage.fillAmount = (float)bar.ContainerCurrentValue / (float)bar.ContainerMaxValue;
+                                bar.UpdateValue();
+                            }
+                        }
+
+                        UpdateFillColor();
+
+                        int it = 0;
+                        foreach (var pair in ContainerMap)
+                        {
+                            GameObject container = pair.Key;
+                            container.transform.SetParent(transform, false);
+
+                            if (it > 0 && it % ContainersPerRow == 0)
+                            {
+                                if (!WrapContainers)
+                                    break;
+
+                                rowCount++;
+                            }
+
+                            if (container != gameObject)
+                                container.transform.localPosition = new Vector3((it % ContainersPerRow) * ContainerOffset.x, (it * ContainerOffset.y) + (rowCount * WrapOffset.y), 0);
+                            it++;
+                        }
+                    }
+                }
                 break;
             case StatusBarType.ContainerRight:
+                {
+
+                }
                 break;
         }
 
@@ -637,23 +671,6 @@ public class StatusBar : MonoBehaviour
 
             if (OverlayTextObject != null)
                 OverlayText = OverlayTextObject.GetComponent<Text>();
-        }
-        if (BarType.ToString().Contains("Container"))
-        {
-            if (ContainerMap == null)
-            {
-                ContainerMap = new Dictionary<GameObject, StatusBar>();
-                    
-            }
-
-            ContainerMap.Add(gameObject, this);
-
-            for (int i = 0; i < transform.childCount; i++)
-            {
-                Transform child = transform.GetChild(i);
-                if (child.name == "Container")
-                    ContainerMap.Add(child.gameObject, child.GetComponent<StatusBar>());
-            }
         }
     }
 
