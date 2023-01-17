@@ -49,6 +49,13 @@ public class StatusBarEditorHandler : Editor
     SerializedProperty TickMode;
     SerializedProperty TickInterval;
 
+    //Container#############################
+    SerializedProperty ValuePerContainer;
+    SerializedProperty ContainerOffset;
+    SerializedProperty WrapContainers;
+    SerializedProperty ContainersPerRow;
+    SerializedProperty WrapOffset;
+
     void OnEnable()
     {
         BarType = serializedObject.FindProperty("BarType");
@@ -86,6 +93,12 @@ public class StatusBarEditorHandler : Editor
         TickSize = serializedObject.FindProperty("TickSize");
         TickMode = serializedObject.FindProperty("TickMode");
         TickInterval = serializedObject.FindProperty("TickInterval");
+
+        ValuePerContainer = serializedObject.FindProperty("ValuePerContainer");
+        ContainerOffset = serializedObject.FindProperty("ContainerOffset");
+        ContainersPerRow = serializedObject.FindProperty("ContainersPerRow");
+        WrapContainers = serializedObject.FindProperty("WrapContainers");
+        WrapOffset = serializedObject.FindProperty("WrapOffset");
 
         SerializedProperty maxValue = serializedObject.FindProperty("MaxValue");
         maxValue.intValue = 10;
@@ -130,6 +143,32 @@ public class StatusBarEditorHandler : Editor
             {
                 serializedObject.ApplyModifiedProperties();
                 bar.OnSizeChanged();
+            }
+        }
+
+        if (bar.BarType.ToString().Contains("Container"))
+        {
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Container Details", EditorStyles.boldLabel);
+
+            using (var changed = new EditorGUI.ChangeCheckScope())
+            {
+                ValuePerContainer.intValue = EditorGUILayout.IntField("Value Per Container", bar.ValuePerContainer);
+                ContainerOffset.vector2Value = EditorGUILayout.Vector2Field("Container Offset", bar.ContainerOffset);
+                ContainersPerRow.intValue = EditorGUILayout.IntField("Containers Per Row", bar.ContainersPerRow);
+                WrapContainers.boolValue = EditorGUILayout.Toggle("Wrap Containers", bar.WrapContainers);
+
+                if (WrapContainers.boolValue)
+                {
+                    WrapOffset.vector2Value = EditorGUILayout.Vector2Field("Wrap Offset", bar.WrapOffset);
+                }
+
+                if (changed.changed)
+                {
+                    serializedObject.ApplyModifiedProperties();
+                    bar.OnBarTypeChanged();
+                    bar.OnIncrementalTicksChanged();
+                }
             }
         }
 
