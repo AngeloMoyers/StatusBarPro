@@ -273,7 +273,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &31288996
 RectTransform:
   m_ObjectHideFlags: 0
@@ -290,7 +290,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 4, y: -9.16}
+  m_AnchoredPosition: {x: 4, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &31288997
@@ -326,7 +326,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 8
+  m_Text: 145/200
 --- !u!222 &31288998
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -775,8 +775,8 @@ MonoBehaviour:
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 0
-    ctime1: 46067
+    ctime0: 16384
+    ctime1: 45875
     ctime2: 65535
     ctime3: 65535
     ctime4: 65535
@@ -804,21 +804,21 @@ MonoBehaviour:
   CustomBackgroundSprite: {fileID: 0}
   FillAnimationMode: 0
   FillAnimationRate: 1
-  AddTextOverlay: 0
+  AddTextOverlay: 1
   UseTMPro: 0
-  OverlayMode: 0
-  OverlayTextPosition: {x: 4, y: -9.16}
+  OverlayMode: 1
+  OverlayTextPosition: {x: 4, y: 0}
   CustomOverlayText: 
   AddIncrementalTicks: 0
   TickSprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
   TickSize: {x: 2, y: 100}
   TickColor: {r: 0, g: 0, b: 0, a: 1}
   TickMode: 0
-  TickInterval: 2
+  TickInterval: 10
   BorderThickness: {x: 5, y: 5}
   BorderOffset: {x: 0, y: 0}
-  MaxValue: 10
-  CurrentValue: 8
+  MaxValue: 200
+  CurrentValue: 145
 --- !u!1 &485246786
 GameObject:
   m_ObjectHideFlags: 0
@@ -1741,7 +1741,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6514168, g: 1, b: 0, a: 1}
+  m_Color: {r: 0.872017, g: 1, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1753,7 +1753,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 0.8
+  m_FillAmount: 0.725
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0

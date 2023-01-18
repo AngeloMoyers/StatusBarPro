@@ -79,8 +79,8 @@ public class StatusBar : MonoBehaviour
     //End Fill#####################################
 
     //Data
-    [HideInInspector][SerializeField] int MaxValue;
-    [HideInInspector] [SerializeField] int CurrentValue;
+    [HideInInspector][SerializeField] public int MaxValue;
+    [HideInInspector] [SerializeField] public int CurrentValue;
     float NormalizedValue;
 
     private void Reset()
@@ -220,6 +220,8 @@ public class StatusBar : MonoBehaviour
             TargetEndAnimationTime = Time.time + FillAnimationRate;
         }
 
+        OnOverlayChanged();
+
         return CurrentValue;
     }
 
@@ -239,6 +241,8 @@ public class StatusBar : MonoBehaviour
             TargetEndAnimationTime = Time.time + FillAnimationRate;
         }
 
+        OnOverlayChanged();
+
         return CurrentValue;
     }
 
@@ -246,6 +250,7 @@ public class StatusBar : MonoBehaviour
     {
         InitImages();
         OnIncrementalTicksChanged();
+        OnOverlayChanged();
     }
 
     public void OnSizeChanged()

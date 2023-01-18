@@ -14,6 +14,10 @@ public class StatusBarEditorHandler : Editor
     //Custom Options
     SerializedProperty MatchDimensionsForCustomSprites;
 
+    //Data
+    SerializedProperty CurrentValue;
+    SerializedProperty MaxValue;
+
     //Fill
     SerializedProperty FillGradient;
     SerializedProperty FillGradientColorMode;
@@ -87,10 +91,8 @@ public class StatusBarEditorHandler : Editor
         TickMode = serializedObject.FindProperty("TickMode");
         TickInterval = serializedObject.FindProperty("TickInterval");
 
-        SerializedProperty maxValue = serializedObject.FindProperty("MaxValue");
-        maxValue.intValue = 10;
-        SerializedProperty currentValue = serializedObject.FindProperty("CurrentValue");
-        currentValue.intValue = 8;
+        MaxValue = serializedObject.FindProperty("MaxValue");
+        CurrentValue = serializedObject.FindProperty("CurrentValue");
 
         serializedObject.ApplyModifiedProperties();
     }
@@ -130,6 +132,28 @@ public class StatusBarEditorHandler : Editor
             {
                 serializedObject.ApplyModifiedProperties();
                 bar.OnSizeChanged();
+            }
+        }
+
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Data", EditorStyles.boldLabel);
+        using (var changed = new EditorGUI.ChangeCheckScope())
+        {
+            EditorGUILayout.BeginHorizontal();
+            var defaultLabelWidth = EditorGUIUtility.labelWidth;
+            var defaultFieldWidth = EditorGUIUtility.fieldWidth;
+            EditorGUIUtility.labelWidth = 80;
+            EditorGUIUtility.fieldWidth = 20;
+            MaxValue.intValue = EditorGUILayout.IntField("Max Value", bar.MaxValue);
+            CurrentValue.intValue = EditorGUILayout.IntField("Current Value", bar.CurrentValue);
+            EditorGUIUtility.labelWidth = defaultLabelWidth;
+            EditorGUIUtility.fieldWidth = defaultFieldWidth;
+            EditorGUILayout.EndHorizontal();
+
+            if (changed.changed)
+            {
+                serializedObject.ApplyModifiedProperties();
+                bar.OnBarTypeChanged();
             }
         }
 
