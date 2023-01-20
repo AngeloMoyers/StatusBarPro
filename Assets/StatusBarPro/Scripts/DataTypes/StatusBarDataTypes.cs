@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public enum StatusBarType
@@ -44,4 +45,34 @@ public enum IncrementalTickMode
 {
     Value,
     Percent,
+}
+
+[System.Serializable]
+public enum ContainerWrapDirection
+{
+    Up,
+    Down
+}
+
+[System.Serializable]
+public enum ContainerFillMode
+{
+    Horizontal,
+    Vertical,
+    Radial
+}
+
+[System.Serializable]
+public class StatusBarObjectData
+{
+    public GameObject ContainerObject;
+
+    public Image FillImage;
+    public Image BackgroundImage;
+    public Image BorderImage;
+    public Image BorderMaskImage;
+    public Image BarMaskImage;
+
+    public int CurrentValue;
+    public float NormalizedValue;
 }
