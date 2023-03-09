@@ -30,12 +30,18 @@ public class StatusBarHandler : MonoBehaviour
 
     [SerializeField] public bool CustomFill;
     [SerializeField] public Sprite CustomFillSprite;
+    [SerializeField] public Vector2 CustomFillOffset;
+    [SerializeField] public Vector2 CustomFillSize;
 
     [SerializeField] public bool CustomBorder;
     [SerializeField] public Sprite CustomBorderSprite;
+    [SerializeField] public Vector2 CustomBorderOffset;
+    [SerializeField] public Vector2 CustomBorderSize;
 
     [SerializeField] public bool CustomBackground;
     [SerializeField] public Sprite CustomBackgroundSprite;
+    [SerializeField] public Vector2 CustomBackgroundOffset;
+    [SerializeField] public Vector2 CustomBackgroundSize;
 
     //Animation
     [SerializeField] public FillAnimationMode FillAnimationMode;
@@ -314,7 +320,9 @@ public class StatusBarHandler : MonoBehaviour
                             FillImage.fillAmount = NormalizedValue;
                             break;
                         }
+
                 }
+                UpdateFillColor(FillImage, FillImage.fillAmount);
             }
         }
     }

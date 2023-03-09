@@ -25,6 +25,8 @@ public class StatusBarEditorHandler : Editor
     SerializedProperty FillGradientColorMode;
     SerializedProperty CustomFillModeOn;
     SerializedProperty CustomFillSprite;
+    SerializedProperty CustomFillOffset;
+    SerializedProperty CustomFillSize;
     bool ShowAnimation = true;
     SerializedProperty FillAnimMode;
     SerializedProperty FillAnimationRate;
@@ -34,6 +36,8 @@ public class StatusBarEditorHandler : Editor
     SerializedProperty BackgroundColor;
     SerializedProperty CustomBackgroundModeOn;
     SerializedProperty CustomBackgroundSprite;
+    SerializedProperty CustomBackgroundOffset;
+    SerializedProperty CustomBackgroundSize;
 
     //Border
     bool ShowBorder = true;
@@ -42,6 +46,8 @@ public class StatusBarEditorHandler : Editor
     SerializedProperty BorderOffset;
     SerializedProperty CustomBorderModeOn;
     SerializedProperty CustomBorderSprite;
+    SerializedProperty CustomBorderOffset;
+    SerializedProperty CustomBorderSize;
 
     //Overlay
     bool ShowOverlay = true;
@@ -83,18 +89,24 @@ public class StatusBarEditorHandler : Editor
         FillGradientSolidColor = serializedObject.FindProperty("FillGradientSolidColor");
         CustomFillModeOn = serializedObject.FindProperty("CustomFill");
         CustomFillSprite = serializedObject.FindProperty("CustomFillSprite");
+        CustomFillOffset = serializedObject.FindProperty("CustomFillOffset");
+        CustomFillSize = serializedObject.FindProperty("CustomFillSize");
         FillAnimMode = serializedObject.FindProperty("FillAnimationMode");
         FillAnimationRate = serializedObject.FindProperty("FillAnimationRate");
 
         BackgroundColor = serializedObject.FindProperty("BackgroundColor");
         CustomBackgroundModeOn = serializedObject.FindProperty("CustomBackground");
         CustomBackgroundSprite = serializedObject.FindProperty("CustomBackgroundSprite");
+        CustomBackgroundOffset = serializedObject.FindProperty("CustomBackgroundOffset");
+        CustomBackgroundSize = serializedObject.FindProperty("CustomBackgroundSize");
 
         BorderColor = serializedObject.FindProperty("BorderColor");
         BorderThickness = serializedObject.FindProperty("BorderThickness");
         BorderOffset = serializedObject.FindProperty("BorderOffset");
         CustomBorderModeOn = serializedObject.FindProperty("CustomBorder");
         CustomBorderSprite = serializedObject.FindProperty("CustomBorderSprite");
+        CustomBorderOffset = serializedObject.FindProperty("CustomBorderOffset");
+        CustomBorderSize = serializedObject.FindProperty("CustomBorderSize");
 
         AddTextOverlay = serializedObject.FindProperty("AddTextOverlay");
         UseTMPro = serializedObject.FindProperty("UseTMPro");
@@ -226,7 +238,11 @@ public class StatusBarEditorHandler : Editor
             {
                 CustomFillModeOn.boolValue = EditorGUILayout.Toggle("Custom Fill", bar.CustomFill);
                 if (CustomFillModeOn.boolValue)
+                {
                     CustomFillSprite.objectReferenceValue = EditorGUILayout.ObjectField("Custom Border Image", CustomFillSprite.objectReferenceValue, typeof(Sprite), false, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    CustomFillOffset.vector2Value = EditorGUILayout.Vector2Field("Position Offset", bar.CustomFillOffset);
+                    CustomFillSize.vector2Value = EditorGUILayout.Vector2Field("Size", bar.CustomFillSize);
+                }
 
                 FillGradientColorMode.enumValueIndex = (int)(GradientColorMode)EditorGUILayout.EnumPopup("Fill Gradient Color Mode", bar.FillGradientMode);
                 if (FillGradientColorMode.enumValueIndex == (int)GradientColorMode.Solid)
@@ -254,7 +270,11 @@ public class StatusBarEditorHandler : Editor
             {
                 CustomBorderModeOn.boolValue = EditorGUILayout.Toggle("Custom Border", bar.CustomBorder);
                 if (CustomBorderModeOn.boolValue)
+                {
                     CustomBorderSprite.objectReferenceValue = EditorGUILayout.ObjectField("Custom Border Image", CustomBorderSprite.objectReferenceValue, typeof(Sprite), false, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    CustomBorderOffset.vector2Value = EditorGUILayout.Vector2Field("Position Offset", bar.CustomBorderOffset);
+                    CustomBorderSize.vector2Value = EditorGUILayout.Vector2Field("Size", bar.CustomBorderSize);
+                }
 
                 BorderColor.colorValue = EditorGUILayout.ColorField("Border Color", BorderColor.colorValue);
 
@@ -289,7 +309,11 @@ public class StatusBarEditorHandler : Editor
             {
                 CustomBackgroundModeOn.boolValue = EditorGUILayout.Toggle("Custom Background", bar.CustomBackground);
                 if (CustomBackgroundModeOn.boolValue)
+                {
                     CustomBackgroundSprite.objectReferenceValue = EditorGUILayout.ObjectField("Custom Border Image", CustomBackgroundSprite.objectReferenceValue, typeof(Sprite), false, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    CustomBorderOffset.vector2Value = EditorGUILayout.Vector2Field("Position Offset", bar.CustomBorderOffset);
+                    CustomBorderSize.vector2Value = EditorGUILayout.Vector2Field("Size", bar.CustomBorderSize);
+                }
 
                 BackgroundColor.colorValue = EditorGUILayout.ColorField("Background Color", BackgroundColor.colorValue);
                 if (changed.changed)
